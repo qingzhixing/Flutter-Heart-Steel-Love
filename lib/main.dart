@@ -1,7 +1,15 @@
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(const MainPage());
+  runApp(
+    MaterialApp(
+      title: "庞然吞噬之我要叠钢钢钢钢",
+      home: const MainPage(),
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+      ),
+    ),
+  );
 }
 
 class MainPage extends StatelessWidget {
@@ -9,13 +17,15 @@ class MainPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: Scaffold(
-        body: Center(
-          child: Text('Hello World!'),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Center(
+          child: Text('庞然吞噬之我要叠钢钢钢钢'),
         ),
       ),
-      title: "庞然吞噬之我要叠钢钢钢钢",
+      body: const Center(
+        child: Text('Hello World!'),
+      ),
     );
   }
 }
