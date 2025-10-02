@@ -33,40 +33,39 @@ class _MainPageState extends State<MainPage> {
   // 心之钢充能
   int _heartSteelCharge = 0;
 
+  final int maxHeartSteelCharge = 5;
+
+  var audioCache = AudioCache(prefix: 'assets/SFX/');
+  var audioPlayer = AudioPlayer();
+
   void _onCharged() async {
-    if (_heartSteelCharge < 3) {
-      setState(() {
-        _heartSteelCharge++;
-      });
-      // SFX
-      var player = AudioPlayer();
-      player.setReleaseMode(ReleaseMode.stop);
-      var cache = AudioCache(prefix: 'assets/SFX/');
-      Future<Uri> sfxUri;
+    if (_heartSteelCharge >= maxHeartSteelCharge) return;
 
-      try {
-        // 第三层的充能特效不同
-        if (_heartSteelCharge == 3) {
-          var sfxId = Random().nextInt(3) + 1;
-          sfxUri = cache.load('Heartsteel_3rd_stack_SFX_$sfxId.mp3');
-        } else {
-          var sfxId = Random().nextInt(4) + 1;
-          sfxUri = cache.load('Heartsteel_stack_SFX_$sfxId.mp3');
-          // 此时还能继续充能
-          chargeTimer = Timer(const Duration(milliseconds: 1000), _onCharged);
-        }
-      } catch (e) {
-        debugPrint("Error loading audio file: $e");
-        return;
-      }
+    setState(() {
+      _heartSteelCharge++;
+    });
+    // SFX
+    audioPlayer.setReleaseMode(ReleaseMode.stop);
+    Future<Uri> sfxUri;
 
-      await sfxUri.then((uri) {
-        player.setSource(UrlSource(uri.path));
-      });
-
-      await player.setVolume(0.5);
-      await player.resume();
+    // 最后一层的充能特效不同
+    if (_heartSteelCharge == maxHeartSteelCharge) {
+      var sfxId = Random().nextInt(3) + 1;
+      sfxUri = audioCache.load('Heartsteel_3rd_stack_SFX_$sfxId.mp3');
+    } else {
+      var sfxId = Random().nextInt(4) + 1;
+      sfxUri = audioCache.load('Heartsteel_stack_SFX_$sfxId.mp3');
+      // 此时还能继续充能
+      chargeTimer = Timer(const Duration(milliseconds: 1000), _onCharged);
     }
+
+    await sfxUri.then((uri) {
+      audioPlayer.pause();
+      audioPlayer.setSource(UrlSource(uri.path));
+    });
+
+    await audioPlayer.setVolume(0.5);
+    await audioPlayer.resume();
   }
 
   @override
@@ -76,7 +75,7 @@ class _MainPageState extends State<MainPage> {
   }
 
   void _onHeartSteelPressed() async {
-    if (_heartSteelCharge < 3) {
+    if (_heartSteelCharge < maxHeartSteelCharge) {
       return;
     }
 
@@ -87,22 +86,16 @@ class _MainPageState extends State<MainPage> {
 
     // 三选一播放文件
     var sfxId = Random().nextInt(3) + 1;
-    var player = AudioPlayer();
-    player.setReleaseMode(ReleaseMode.stop);
+    audioPlayer.setReleaseMode(ReleaseMode.stop);
 
-    var cache = AudioCache(prefix: 'assets/SFX/');
     Future<Uri> sfxUri;
-    try {
-      sfxUri = cache.load('Heartsteel_trigger_SFX_$sfxId.mp3');
-    } catch (e) {
-      debugPrint("Error loading audio file: $e");
-      return;
-    }
+    sfxUri = audioCache.load('Heartsteel_trigger_SFX_$sfxId.mp3');
+
     await sfxUri.then((uri) {
-      player.setSource(UrlSource(uri.path));
+      audioPlayer.setSource(UrlSource(uri.path));
     });
-    await player.setVolume(0.3);
-    await player.resume();
+    await audioPlayer.setVolume(0.3);
+    await audioPlayer.resume();
 
     // 恢复充能
     chargeTimer = Timer(const Duration(milliseconds: 1000), _onCharged);
