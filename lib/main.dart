@@ -71,7 +71,7 @@ class _MainPageState extends State<MainPage> {
     }
 
     setState(() {
-      _heartSteelStack += Random().nextInt(65);
+      _heartSteelStack += Random().nextInt(45) + 20;
       _heartSteelCharge = 0;
     });
 
