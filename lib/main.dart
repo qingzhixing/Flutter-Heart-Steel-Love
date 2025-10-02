@@ -2,6 +2,7 @@ import 'dart:math';
 import 'dart:async';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 var appThemeData = ThemeData(
   colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
@@ -288,6 +289,31 @@ class _MainPageState extends State<MainPage> {
                       activeThumbColor: Colors.green,
                       inactiveTrackColor: Colors.grey,
                     ),
+                  ],
+                ),
+                // 署名
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  spacing: 10,
+                  children: [
+                    const Text(
+                      '@qingzhixing',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey,
+                        fontFamily: "Microsoft YaHei",
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        launchUrlString(
+                          "https://github.com/qingzhixing/Flutter-Heart-Steel-Love",
+                          mode: LaunchMode.externalApplication,
+                        );
+                      },
+                      child: const Text("项目源码: @Github"),
+                    )
                   ],
                 ),
               ],
