@@ -33,10 +33,9 @@ class _MainPageState extends State<MainPage> {
   // 心之钢充能
   int _heartSteelCharge = 0;
 
-  final int maxHeartSteelCharge = 5;
+  final int maxHeartSteelCharge = 3;
 
   var audioCache = AudioCache(prefix: 'assets/SFX/');
-  var audioPlayer = AudioPlayer();
 
   void _onCharged() async {
     if (_heartSteelCharge >= maxHeartSteelCharge) return;
@@ -45,8 +44,14 @@ class _MainPageState extends State<MainPage> {
       _heartSteelCharge++;
     });
     // SFX
+    var audioPlayer = AudioPlayer();
     audioPlayer.setReleaseMode(ReleaseMode.stop);
     Future<Uri> sfxUri;
+
+    audioPlayer.onPlayerComplete.listen((_) async {
+      await audioPlayer.dispose();
+      debugPrint('播放器已释放');
+    });
 
     // 最后一层的充能特效不同
     if (_heartSteelCharge == maxHeartSteelCharge) {
@@ -85,8 +90,14 @@ class _MainPageState extends State<MainPage> {
     });
 
     // 三选一播放文件
+    var audioPlayer = AudioPlayer();
     var sfxId = Random().nextInt(3) + 1;
     audioPlayer.setReleaseMode(ReleaseMode.stop);
+
+    audioPlayer.onPlayerComplete.listen((_) async {
+      await audioPlayer.dispose();
+      debugPrint('播放器已释放');
+    });
 
     Future<Uri> sfxUri;
     sfxUri = audioCache.load('Heartsteel_trigger_SFX_$sfxId.mp3');
