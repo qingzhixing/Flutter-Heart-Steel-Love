@@ -1,3 +1,4 @@
-# heart_steel
+# 重生之我在艾欧尼亚叠钢
+亚索，我要叠钢！
 
-A new Flutter project.
+![Cover](Doc/cover.png)

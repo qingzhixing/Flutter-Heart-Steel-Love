@@ -98,7 +98,7 @@ class _MainPageState extends State<MainPage> {
             spacing: 10,
             children: [
               Text(
-                '我要 叠！钢！',
+                '我要叠钢',
                 style: TextStyle(
                   fontSize: 25,
                   fontWeight: FontWeight.bold,
@@ -124,17 +124,40 @@ class _MainPageState extends State<MainPage> {
               child: AspectRatio(
                 aspectRatio: 1,
                 child: Ink(
-                  decoration: BoxDecoration(
-                    image: const DecorationImage(
-                        image: AssetImage('assets/icon/HeartSteel.jpg'),
-                        fit: BoxFit.fill),
-                    borderRadius: BorderRadius.circular(50),
-                  ),
-                  child: InkWell(
-                    borderRadius: BorderRadius.circular(50),
-                    onTap: _onHeartSteelPressed,
-                  ),
-                ),
+                    decoration: BoxDecoration(
+                      image: const DecorationImage(
+                          image: AssetImage('assets/icon/HeartSteel.jpg'),
+                          fit: BoxFit.fill),
+                      borderRadius: BorderRadius.circular(50),
+                    ),
+                    child: Stack(
+                      children: [
+                        Positioned(
+                          right: 20,
+                          bottom: 10,
+                          child: Text(
+                            _heartSteelStack.toString(),
+                            style: const TextStyle(
+                              fontSize: 60,
+                              color: Colors.white,
+                              shadows: [
+                                Shadow(
+                                  color: Colors.black,
+                                  offset: Offset(2, 2),
+                                  blurRadius: 1,
+                                ),
+                              ],
+                              fontWeight: FontWeight.bold,
+                              fontFamily: "Microsoft YaHei",
+                            ),
+                          ),
+                        ),
+                        InkWell(
+                          borderRadius: BorderRadius.circular(50),
+                          onTap: _onHeartSteelPressed,
+                        ),
+                      ],
+                    )),
               ),
             ),
           ),
