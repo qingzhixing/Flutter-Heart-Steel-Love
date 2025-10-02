@@ -33,7 +33,7 @@ class _MainPageState extends State<MainPage> {
   // 心之钢充能
   int _heartSteelCharge = 0;
 
-  void _onCharged() {
+  void _onCharged() async {
     if (_heartSteelCharge < 3) {
       setState(() {
         _heartSteelCharge++;
@@ -41,21 +41,31 @@ class _MainPageState extends State<MainPage> {
       // SFX
       var player = AudioPlayer();
       player.setReleaseMode(ReleaseMode.stop);
+      var cache = AudioCache(prefix: 'assets/SFX/');
+      Future<Uri> sfxUri;
 
-      // 第三层的充能特效不同
-      if (_heartSteelCharge == 3) {
-        var sfxId = Random().nextInt(3) + 1;
-        player
-            .setSource(AssetSource('SFX/Heartsteel_3rd_stack_SFX_$sfxId.mp3'));
-      } else {
-        var sfxId = Random().nextInt(4) + 1;
-        player.setSource(AssetSource('SFX/Heartsteel_stack_SFX_$sfxId.mp3'));
-        // 此时还能继续充能
-        chargeTimer = Timer(const Duration(milliseconds: 1000), _onCharged);
+      try {
+        // 第三层的充能特效不同
+        if (_heartSteelCharge == 3) {
+          var sfxId = Random().nextInt(3) + 1;
+          sfxUri = cache.load('Heartsteel_3rd_stack_SFX_$sfxId.mp3');
+        } else {
+          var sfxId = Random().nextInt(4) + 1;
+          sfxUri = cache.load('Heartsteel_stack_SFX_$sfxId.mp3');
+          // 此时还能继续充能
+          chargeTimer = Timer(const Duration(milliseconds: 1000), _onCharged);
+        }
+      } catch (e) {
+        debugPrint("Error loading audio file: $e");
+        return;
       }
 
-      player.setVolume(0.5);
-      player.resume();
+      await sfxUri.then((uri) {
+        player.setSource(UrlSource(uri.path));
+      });
+
+      await player.setVolume(0.5);
+      await player.resume();
     }
   }
 
@@ -65,7 +75,7 @@ class _MainPageState extends State<MainPage> {
     chargeTimer = Timer(const Duration(milliseconds: 1000), _onCharged);
   }
 
-  void _onHeartSteelPressed() {
+  void _onHeartSteelPressed() async {
     if (_heartSteelCharge < 3) {
       return;
     }
@@ -79,9 +89,20 @@ class _MainPageState extends State<MainPage> {
     var sfxId = Random().nextInt(3) + 1;
     var player = AudioPlayer();
     player.setReleaseMode(ReleaseMode.stop);
-    player.setSource(AssetSource('SFX/Heartsteel_trigger_SFX_$sfxId.mp3'));
-    player.setVolume(0.3);
-    player.resume();
+
+    var cache = AudioCache(prefix: 'assets/SFX/');
+    Future<Uri> sfxUri;
+    try {
+      sfxUri = cache.load('Heartsteel_trigger_SFX_$sfxId.mp3');
+    } catch (e) {
+      debugPrint("Error loading audio file: $e");
+      return;
+    }
+    await sfxUri.then((uri) {
+      player.setSource(UrlSource(uri.path));
+    });
+    await player.setVolume(0.3);
+    await player.resume();
 
     // 恢复充能
     chargeTimer = Timer(const Duration(milliseconds: 1000), _onCharged);
