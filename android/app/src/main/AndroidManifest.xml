@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application
-        android:label="heart_steel"
+        android:label="重生之我在艾欧尼亚叠钢"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
