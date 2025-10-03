@@ -60,8 +60,10 @@ class _MainPageState extends State<MainPage> {
     audioPlayer.setReleaseMode(ReleaseMode.stop);
     Future<Uri> sfxUri;
 
-    audioPlayer.onPlayerComplete.listen((_) async {
-      await audioPlayer.dispose();
+    audioPlayer.onPlayerComplete.listen((_) {
+      if (audioPlayer.state != PlayerState.disposed) {
+        audioPlayer.dispose();
+      }
       debugPrint('播放器已释放');
     });
 
@@ -144,8 +146,10 @@ class _MainPageState extends State<MainPage> {
     var sfxId = Random().nextInt(3) + 1;
     audioPlayer.setReleaseMode(ReleaseMode.stop);
 
-    audioPlayer.onPlayerComplete.listen((_) async {
-      await audioPlayer.dispose();
+    audioPlayer.onPlayerComplete.listen((_) {
+      if (audioPlayer.state != PlayerState.disposed) {
+        audioPlayer.dispose();
+      }
       debugPrint('播放器已释放');
     });
 
