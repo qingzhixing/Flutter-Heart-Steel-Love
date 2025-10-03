@@ -2,6 +2,7 @@ import 'dart:math';
 import 'dart:async';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
+import 'package:heart_steel/ephemeral_audio_player.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 var appThemeData = ThemeData(
@@ -47,8 +48,6 @@ class _MainPageState extends State<MainPage> {
   // 无冷却模式开关状态
   bool _isNoCooldown = false;
 
-  var audioCache = AudioCache(prefix: 'assets/SFX/');
-
   void _onCharged() async {
     if (_heartSteelCharge >= maxHeartSteelCharge || _isNoCooldown) return;
 
@@ -56,35 +55,19 @@ class _MainPageState extends State<MainPage> {
       _heartSteelCharge++;
     });
     // SFX
-    var audioPlayer = AudioPlayer();
-    audioPlayer.setReleaseMode(ReleaseMode.stop);
-    Future<Uri> sfxUri;
-
-    audioPlayer.onPlayerComplete.listen((_) {
-      if (audioPlayer.state != PlayerState.disposed) {
-        audioPlayer.dispose();
-      }
-      debugPrint('播放器已释放');
-    });
 
     // 最后一层的充能特效不同
     if (_heartSteelCharge == maxHeartSteelCharge) {
       var sfxId = Random().nextInt(3) + 1;
-      sfxUri = audioCache.load('Heartsteel_3rd_stack_SFX_$sfxId.mp3');
+      EphemeralAudioPlayer.playAndDispose(
+          assetPath: 'Heartsteel_3rd_stack_SFX_$sfxId.mp3');
     } else {
       var sfxId = Random().nextInt(4) + 1;
-      sfxUri = audioCache.load('Heartsteel_stack_SFX_$sfxId.mp3');
+      EphemeralAudioPlayer.playAndDispose(
+          assetPath: 'Heartsteel_stack_SFX_$sfxId.mp3');
       // 此时还能继续充能
       chargeTimer = Timer(Duration(milliseconds: chargeTime_ms), _onCharged);
     }
-
-    await sfxUri.then((uri) {
-      audioPlayer.pause();
-      audioPlayer.setSource(UrlSource(uri.path));
-    });
-
-    await audioPlayer.setVolume(0.5);
-    await audioPlayer.resume();
   }
 
   // 处理狂暴模式开关变化
@@ -142,25 +125,9 @@ class _MainPageState extends State<MainPage> {
     });
 
     // 三选一播放文件
-    var audioPlayer = AudioPlayer();
     var sfxId = Random().nextInt(3) + 1;
-    audioPlayer.setReleaseMode(ReleaseMode.stop);
-
-    audioPlayer.onPlayerComplete.listen((_) {
-      if (audioPlayer.state != PlayerState.disposed) {
-        audioPlayer.dispose();
-      }
-      debugPrint('播放器已释放');
-    });
-
-    Future<Uri> sfxUri;
-    sfxUri = audioCache.load('Heartsteel_trigger_SFX_$sfxId.mp3');
-
-    await sfxUri.then((uri) {
-      audioPlayer.setSource(UrlSource(uri.path));
-    });
-    await audioPlayer.setVolume(0.3);
-    await audioPlayer.resume();
+    EphemeralAudioPlayer.playAndDispose(
+        assetPath: 'Heartsteel_trigger_SFX_$sfxId.mp3');
 
     // 如果不是无冷却模式，恢复充能
     if (!_isNoCooldown) {
