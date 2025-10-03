@@ -279,7 +279,7 @@ class _MainPageState extends State<MainPage> {
                     TextButton(
                       onPressed: () {
                         launchUrlString(
-                          "https://github.com/qingzhixing/Flutter-Heart-Steel-Love",
+                          "https://github.com/qingzhixing/Heart-Steel-Love",
                           mode: LaunchMode.externalApplication,
                         );
                       },
